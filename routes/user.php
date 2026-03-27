@@ -1,0 +1,82 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::namespace('User\Auth')->middleware(['guest:user'])->group(function () {
+    Route::controller('LoginController')->group(function () {
+        Route::get('/login', 'showLoginForm')->name('login');
+        Route::post('/login', 'login');
+        Route::get('logout', 'logout')->withoutMiddleware(['guest:user'])->name('logout');
+    });
+
+    Route::controller('RegisterController')->middleware(['guest:user'])->group(function () {
+        Route::get('register', 'showRegistrationForm')->name('register');
+        Route::post('register', 'register');
+        Route::post('check-mail', 'checkUser')->name('checkUser')->withoutMiddleware('guest:user');
+    });
+
+    Route::controller('ForgotPasswordController')->prefix('password')->name('password.')->group(function () {
+        Route::get('reset', 'showLinkRequestForm')->name('request');
+        Route::post('email', 'sendResetCodeEmail')->name('email');
+        Route::get('code-verify', 'codeVerify')->name('code.verify');
+        Route::post('verify-code', 'verifyCode')->name('verify.code');
+    });
+
+    Route::controller('ResetPasswordController')->group(function () {
+        Route::post('password/reset', 'reset')->name('password.update');
+        Route::get('password/reset/{token}', 'showResetForm')->name('password.reset');
+    });
+
+    Route::controller('SocialiteController')->group(function () {
+        Route::get('social-login/{provider}', 'socialLogin')->name('social.login');
+        Route::get('social-login/callback/{provider}', 'callback')->name('social.login.callback');
+    });
+});
+
+Route::middleware('user')->group(function () {
+    Route::get('user-data', 'User\UserController@userData')->name('data');
+    Route::post('user-data-submit', 'User\UserController@userDataSubmit')->name('data.submit');
+
+    Route::namespace('user')->middleware('registration.complete:user')->controller('AuthorizationController')->group(function () {
+        Route::get('authorization', 'authorizeForm')->name('authorization');
+        Route::get('resend-verify/{type}', 'sendVerifyCode')->name('send.verify.code');
+        Route::post('verify-email', 'emailVerification')->name('verify.email');
+        Route::post('verify-mobile', 'mobileVerification')->name('verify.mobile');
+        Route::post('verify-g2fa', 'g2faVerification')->name('go2fa.verify');
+    });
+
+    Route::middleware(['check.status:user', 'registration.complete:user'])->namespace('user')->group(function () {
+        Route::controller('UserController')->group(function () {
+            Route::get('dashboard', 'home')->name('home');
+
+            //2FA
+            Route::get('twofactor', 'show2faForm')->name('twofactor');
+            Route::post('twofactor/enable', 'create2fa')->name('twofactor.enable');
+            Route::post('twofactor/disable', 'disable2fa')->name('twofactor.disable');
+
+            Route::post('add-device-token', 'addDeviceToken')->name('add.device.token');
+        });
+
+        //Profile setting
+        Route::controller('ProfileController')->group(function () {
+            Route::get('profile-setting', 'profile')->name('profile.setting');
+            Route::post('profile-setting', 'submitProfile')->name('profile.submit');
+            Route::get('change-password', 'changePassword')->name('change.password');
+            Route::post('change-password', 'submitPassword');
+            Route::post('update/image', 'updateImage')->name('update.image');
+        });
+
+
+        // Support Ticket
+        Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(function () {
+            Route::get('', 'supportTicket')->name('index');
+            Route::get('new', 'openSupportTicket')->name('open');
+            Route::post('create', 'storeSupportTicket')->name('store');
+            Route::get('view/{ticket}', 'viewTicket')->name('view');
+            Route::post('reply/{ticket}', 'replyTicket')->name('reply');
+            Route::post('close/{ticket}', 'closeTicket')->name('close');
+            Route::get('download/{ticket}', 'ticketDownload')->name('download');
+        });
+    });
+
+});

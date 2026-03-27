@@ -1,0 +1,237 @@
+{
+    "banner": {
+        "builder": true,
+        "no_selection": true,
+        "name": "Banner",
+        "content": {
+            "images": {
+                "image_one": {
+                    "size": "100x100"
+                },
+                "image_two": {
+                    "size": "100x100"
+                },
+                "image_three": {
+                    "size": "100x100"
+                },
+                "image_four": {
+                    "size": "100x100"
+                },
+                "image_five": {
+                    "size": "100x100"
+                },
+                "image_six": {
+                    "size": "100x100"
+                }
+            },
+            "heading": "text",
+            "subheading": "text",
+            "search_heading": "text"
+        }
+    },
+    "about": {
+        "builder": true,
+        "name": "About Us",
+        "content": {
+            "heading": "text",
+            "subheading": "text",
+            "description": "textarea",
+            "button_text": "text",
+            "button_url": "text"
+        },
+        "element": {
+            "title": "text",
+            "images": {
+                "image": {
+                    "size": ""
+                }
+            },
+            "modal": false
+        }
+    },
+    "policy_pages": {
+        "builder": true,
+        "no_selection": true,
+        "name": "Policy Pages",
+        "hide_builder": true,
+        "element": {
+            "title": "text",
+            "slug": "title",
+            "details": "textarea-nic",
+            "modal": false
+        }
+    },
+    "header": {
+        "builder": true,
+        "no_selection": true,
+        "name": "Header",
+        "content": {
+            "images": {
+                "header_logo": {
+                    "size": ""
+                },
+                "header_logo_white_background": {
+                    "size": ""
+                }
+            }
+        }
+    },
+    "footer": {
+        "builder": true,
+        "no_selection": true,
+        "name": "Footer",
+        "content": {
+            "images": {
+                "footer_logo": {
+                    "size": ""
+                }
+            },
+            "footer_info": "textarea-nic",
+            "copyright": "text"
+        }
+    },
+    "social_links": {
+        "builder": true,
+        "name": "Social Links",
+        "element": {
+            "images": {
+                "icon_image": {
+                    "size": "64x64"
+                }
+            },
+            "name": "text",
+            "url": "text",
+            "modal": true
+        }
+    },
+    "fixed_social_links": {
+        "builder": true,
+        "name": "Fixed Social Links",
+        "element": {
+            "images": {
+                "icon_image": {
+                    "size": "64x64"
+                }
+            },
+            "name": "text",
+            "url": "text",
+            "modal": true
+        }
+    },
+    "feature_icons": {
+        "builder": true,
+        "no_selection": true,
+        "name": "Feature Icons",
+        "element": {
+            "images": {
+                "icon": {
+                    "size": "64x64"
+                }
+            },
+            "title": "text",
+            "modal": true
+        }
+    },
+    "hero_slider": {
+        "builder": true,
+        "name": "Hero Slider",
+        "element": {
+            "images": {
+                "image": {
+                    "size": ""
+                }
+            },
+            "title": "text",
+            "button_text": "text",
+            "button_link": "text",
+            "modal": false
+        }
+    },
+    "inner_slider": {
+        "builder": true,
+        "name": "Inner Slider",
+        "element": {
+            "page_slug": "text",
+            "images": {
+                "image": {
+                    "size": ""
+                }
+            },
+            "title": "text",
+            "modal": false
+        }
+    },
+    "accommodation": {
+        "builder": true,
+        "name": "Accommodation",
+        "content": {
+            "heading": "text",
+            "button_text": "text",
+            "button_link": "text"
+        }
+    },
+    "special_offer": {
+        "builder": true,
+        "name": "Special Offer",
+        "content": {
+            "heading": "text"
+        }
+    },
+    "explore_services": {
+        "builder": true,
+        "name": "Explore Our Services",
+        "content": {
+            "heading": "text"
+        }
+    },
+    "mice_events": {
+        "builder": true,
+        "name": "Meetings & Events",
+        "content": {
+            "heading": "text"
+        }
+    },
+    "facilities": {
+        "builder": true,
+        "name": "Facilities",
+        "content": {
+            "images": {
+                "background_image": {
+                    "size": ""
+                }
+            },
+            "heading": "text"
+        }
+    },
+    "travel_guides": {
+        "builder": true,
+        "name": "Travel Guides",
+        "content": {
+            "heading": "text"
+        }
+    },
+    "newsletter": {
+        "builder": true,
+        "name": "Newsletter",
+        "content": {
+            "heading": "text"
+        }
+    },
+    "contact_form": {
+        "builder": true,
+        "name": "Contact Form",
+        "content": {
+            "title": "text",
+            "description": "textarea",
+            "images": {
+                "banner": {
+                    "size": ""
+                }
+            },
+            "google_map_iframe": {
+                "type": "textarea",
+                "i18n": false
+            }
+        }
+    }
+}
