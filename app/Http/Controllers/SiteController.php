@@ -121,7 +121,15 @@ class SiteController extends Controller
 
         return view('Template::special_offers', compact('pageTitle', 'sections', 'seoContents', 'seoImage', 'breadcrumb_mapping', 'specialOffers'));
     }
-
+    public function about()
+    {
+        $page        = Page::where('tempname', activeTemplate())->where('slug', 'about')->firstOrFail();
+        $pageTitle   = $page->name;
+        $sections    = $page->secs;
+        $seoContents = $page->seo_content;
+        $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
+        return view('Template::about', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
+    }
 
     public function meetingEvents($categoryId = null)
     {

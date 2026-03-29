@@ -2039,7 +2039,7 @@ body {
 .fixed-social-menu {
     position: fixed;
     right: 30px;
-    bottom: 30px;
+    bottom: 65px;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -2128,7 +2128,7 @@ body {
     display: none !important; /* Hidden by default on large screens */
 }
 
-@media (max-width: 1440px) {
+@media (max-width: 1600px) {
     #tripadvisor_float {
         display: none !important;
     }
@@ -2652,12 +2652,12 @@ body {
     z-index: 1;
 }
 
-.intro-slider-box .swiper {
+.intro-slider-box .swiper , .intro-slider-box .intro-img{
     width: 100%;
     height: 620px;
 }
 
-.intro-slider-box .swiper-slide img {
+.intro-slider-box .swiper-slide img, .intro-slider-box .intro-img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -2737,6 +2737,9 @@ body {
     font-size: 18px;
     font-weight: 400;
     line-height: 150%;
+}
+#restaurantDetails .room-content-box {
+    text-align: left;
 }
 
 #postDetails .room-content-box {
@@ -2869,9 +2872,18 @@ html {
     width: 302px;
     height: 1px;
     background: #000;
-    margin: 15px auto;
+    margin: 24px auto;
 }
-
+.divider-restaurant {
+    width: 302px;
+    height: 1px;
+    background: #000;
+    margin: 24px auto;
+}
+.offer-contact ul {
+    margin-bottom: 0;
+    padding-left: 0;
+}
 .offer-contact ul li span {
     color: #000;
     font-size: 18px;
@@ -2931,7 +2943,8 @@ html {
 }
 
 /* Inquiry Modal Styles */
-.inquiry-modal {
+.inquiry-modal,
+.book-table-modal {
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -2943,19 +2956,22 @@ html {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.inquiry-modal.active {
+.inquiry-modal.active,
+.book-table-modal.active {
     opacity: 1;
     visibility: visible;
 }
 
-.inquiry-modal-overlay {
+.inquiry-modal-overlay,
+.book-table-modal-overlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(8px);
 }
 
-.inquiry-modal-content {
+.inquiry-modal-content,
+.book-table-modal-content {
     position: relative;
     width: 100%;
     max-width: 800px;
@@ -2968,11 +2984,13 @@ html {
     border: 1px solid var(--Gray-1, #e6e6e6);
 }
 
-.inquiry-modal.active .inquiry-modal-content {
+.inquiry-modal.active .inquiry-modal-content,
+.book-table-modal.active .book-table-modal-content {
     transform: translateY(0) scale(1);
 }
 
-.inquiry-modal-close {
+.inquiry-modal-close,
+.book-table-modal-close {
     position: absolute;
     top: 15px;
     right: 15px;
@@ -2984,11 +3002,13 @@ html {
     transition: color 0.3s ease;
 }
 
-.inquiry-modal-close:hover {
+.inquiry-modal-close:hover,
+.book-table-modal-close:hover {
     color: #004a55;
 }
 
-.inquiry-modal-title {
+.inquiry-modal-title,
+.book-table-modal-title {
     font-family: var(--body-font);
     font-size: 32px;
     font-weight: 700;
@@ -2996,14 +3016,16 @@ html {
     letter-spacing: 0.02em;
 }
 
-.inquiry-form label {
+.inquiry-form label,
+.book-table-form label {
     font-size: 20px;
     font-weight: 400;
     color: #000000;
     margin-bottom: 8px;
 }
 
-.inquiry-form .form-control {
+.inquiry-form .form-control,
+.book-table-form .form-control {
     border: 1px solid #ddd;
     padding: 12px 15px;
     font-size: 15px;
@@ -3013,16 +3035,19 @@ html {
     transition: all 0.3s ease;
     background-color: transparent;
 }
-.inquiry-form textarea.form-control {
+.inquiry-form textarea.form-control,
+.book-table-form textarea.form-control {
     height: 100px;
 }
-.inquiry-form .form-control:focus {
+.inquiry-form .form-control:focus,
+.book-table-form .form-control:focus {
     border-color: #caa05c;
     background-color: transparent;
     outline: none;
 }
 
-.btn-inquiry-submit {
+.btn-inquiry-submit,
+.btn-book-table-submit {
     background: #caa05c;
     color: #fff;
     border: none;
@@ -3033,12 +3058,14 @@ html {
     text-align: right;
 }
 
-.btn-inquiry-submit:hover {
+.btn-inquiry-submit:hover,
+.btn-book-table-submit:hover {
     background: #b8934f;
     box-shadow: 0 10px 20px -10px rgba(202, 160, 92, 0.5);
 }
 
-.btn-inquiry-submit .btn-text {
+.btn-inquiry-submit .btn-text,
+.btn-book-table-submit .btn-text {
     display: block;
     font-size: 18px;
     font-weight: 400;
@@ -3046,7 +3073,8 @@ html {
     line-height: 1.2;
 }
 
-.btn-inquiry-submit .btn-subtext {
+.btn-inquiry-submit .btn-subtext,
+.btn-book-table-submit .btn-subtext {
     display: block;
     font-size: 13px;
     font-weight: 400;
@@ -3059,11 +3087,13 @@ body.modal-open {
 }
 
 @media (max-width: 768px) {
-    .inquiry-modal-content {
+    .inquiry-modal-content,
+    .book-table-modal-content {
         padding: 40px 25px;
         border-radius: 16px;
     }
-    .inquiry-modal-title {
+    .inquiry-modal-title,
+    .book-table-modal-title {
         font-size: 28px;
     }
 }
@@ -3218,4 +3248,38 @@ body.modal-open {
     height: 500px;
     border: 0;
     display: block;
+}
+.intro-actions ul {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
+.intro-actions ul a {
+    display: flex;
+    padding: 10px 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    background: var(--color-gold);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 150%;
+    text-decoration: none;
+}
+.intro-actions ul a i {
+    font-size: 24px;
+}
+.intro-restaurant h4 {
+    color: #000;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+.time-schedule {
+    color: #000;
+    font-size: 18px;
+    font-weight: 400;
 }

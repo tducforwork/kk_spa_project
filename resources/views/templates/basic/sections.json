@@ -233,5 +233,32 @@
                 "i18n": false
             }
         }
+    },
+    "about_content": {
+        "builder": true,
+        "name": "(About Us) About us content",
+        "content": {
+            "heading": "text",
+            "description": "textarea-nic",
+            "hotline": "text",
+            "email": "text",
+            "images": {
+                "image": {
+                    "size": "1000x800"
+                }
+            }
+        }
+    },
+    "about_gallery": {
+        "builder": true,
+        "name": "About US Gallery",
+        "element": {
+            "images": {
+                "image": {
+                    "size": "1000x800"
+                }
+            },
+            "modal": false
+        }
     }
 }

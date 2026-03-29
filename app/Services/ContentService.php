@@ -40,7 +40,7 @@ class ContentService
             'with'         => ['translations', 'images', 'introImages'],
             'view'         => 'templates.details.restaurant',
             'variable'     => 'restaurant',
-            'parent'       => ['name' => 'Gastronomy', 'url' => '/gastronomy'],
+            'parent'       => ['name' => 'Dinning & Bar', 'url' => '#'],
             'image_folder' => 'restaurant',
         ],
         Key::TYPE_MICE_EVENT => [

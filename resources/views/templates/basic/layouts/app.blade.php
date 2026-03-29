@@ -119,6 +119,7 @@
 
     {{-- Inquiry Popup Modal --}}
     @include('Template::partials.modal.inquiry_modal')
+    @include('Template::partials.modal.book_table_modal')
 
     @yield('panel')
 
@@ -249,6 +250,17 @@
                 $('body').removeClass('modal-open');
             });
 
+
+            $('.book-table-btn').on('click', function(e) {
+                e.preventDefault();
+                $('#book-table-modal').addClass('active');
+                $('body').addClass('modal-open');
+            });
+
+            $('.book-table-modal-close, .book-table-modal-overlay').on('click', function() {
+                $('#book-table-modal').removeClass('active');
+                $('body').removeClass('modal-open');
+            });
             // Date Picker for Inquiry
             $('.date-picker').daterangepicker({
                 singleDatePicker: true,

@@ -36,6 +36,7 @@ Route::controller('SiteController')->group(function () {
     Route::get('/special-offers', 'specialOffers')->name('special_offers');
     Route::get('/metting-events', 'meetingEvents')->name('meeting_events');
     Route::get('/travel-guide', 'travelGuide')->name('travel_guide');
+    Route::get('/about', 'about')->name('about');
 
     Route::get('/', 'index')->name('home');
     Route::get('/{slug}', 'checkKey')->name('check.key');

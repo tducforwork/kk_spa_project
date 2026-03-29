@@ -36,6 +36,16 @@
                             </ul>
                         </div>
                         <div class="divider-offer"></div>
+                        <div class="intro-actions">
+                            <ul>
+                                <li class="intro-action-item ">
+                                    <a href="#" class="intro-action-link book-room-btn">
+                                        {{ __('Book a room') }}
+                                        <i class="las la-arrow-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="intro-slider-box">
@@ -84,9 +94,12 @@
                     </h3>
 
                     @php
-                        $relatedOffers = App\Models\SpecialOffer::with(['translations', 'images' => function($q) {
-                            $q->where('type', 2);
-                        }])
+                        $relatedOffers = App\Models\SpecialOffer::with([
+                            'translations',
+                            'images' => function ($q) {
+                                $q->where('type', 2);
+                            },
+                        ])
                             ->where('id', '!=', $offer->id)
                             ->inRandomOrder()
                             ->take(3)
