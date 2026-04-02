@@ -35,7 +35,8 @@
     <link href="{{ asset(activeTemplate(true) . 'css/responsive.css') }}" rel="stylesheet" />
 
     @stack('style')
-
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700|Raleway:300,400,500,600,700"
+        rel="stylesheet">
     <link rel="stylesheet" href="{{ asset(activeTemplate(true) . 'css/color.php') }}?color={{ gs('base_color') }}">
 </head>
 
@@ -63,13 +64,14 @@
             <button class="best-price-close"><i class="fa-solid fa-xmark"></i></button>
             <h5 class="best-price-title">@lang('BEST PRICE GUARANTEE')</h5>
             <p class="best-price-text">
-                Enter the special code
-                SUPERSAVE to get further 10% DISCOUNT on all current rate plan
+                {{ __('Enter the special code SUPERSAVE to get further 10% DISCOUNT on all current rate plan') }}
             </p>
-            <a href="" class="btn-book-code">@lang('Book with code')</a>
+            <a href="https://book.securebookings.net/roomrate?id=ecec4926-aab8-1659321528-4540-b400-0e44b8bca614&lang={{ app()->getLocale() == 'vi' ? 'vi' : 'en' }}"
+                class="btn-book-code" target="_blank">@lang('Book with code')</a>
         </div>
     </div>
     <div id="tripadvisor_float">
+        <button class="tripadvisor-close"><i class="fa-solid fa-xmark"></i></button>
         <a href="https://www.tripadvisor.com" target="_blank">
             <img src="{{ asset('assets/images/kk_sapa/tripadvisor_float.webp') }}" alt="TripAdvisor">
         </a>
@@ -116,6 +118,7 @@
             </button>
         </div>
     @endif
+    <div id="google_translate_element" style="display:none"></div>
 
     {{-- Inquiry Popup Modal --}}
     @include('Template::partials.modal.inquiry_modal')
@@ -241,6 +244,8 @@
             // Inquiry Modal Logic
             $('.inquiry-open-form').on('click', function(e) {
                 e.preventDefault();
+                const origin = $(this).data('origin') || 'General';
+                $('#inquiry-modal').find('input[name=origin]').val(origin);
                 $('#inquiry-modal').addClass('active');
                 $('body').addClass('modal-open');
             });
@@ -253,6 +258,8 @@
 
             $('.book-table-btn').on('click', function(e) {
                 e.preventDefault();
+                const origin = $(this).data('origin') || 'General booking';
+                $('#book-table-modal').find('input[name=origin]').val(origin);
                 $('#book-table-modal').addClass('active');
                 $('body').addClass('modal-open');
             });
@@ -271,7 +278,184 @@
                 }
             });
 
+            // Time Picker
+            $('.time-picker').daterangepicker({
+                singleDatePicker: true,
+                timePicker: true,
+                timePicker24Hour: true,
+                timePickerIncrement: 15,
+                locale: {
+                    format: 'HH:mm'
+                }
+            }).on('show.daterangepicker', function(ev, picker) {
+                picker.container.find(".calendar-table").hide();
+            });
+
+            // Toggle Language Switcher
+            $('.language-toggle').on('click', function(e) {
+                e.stopPropagation();
+                $('#languageSwitcher').toggleClass('active');
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#languageSwitcher').length) {
+                    $('#languageSwitcher').removeClass('active');
+                }
+            });
+
+            // Auto Translate Trigger & Persistence
+            window.googleTranslateElementInit = function() {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    autoDisplay: false
+                }, 'google_translate_element');
+
+                // One-time cleanup for the bar after init
+                setTimeout(hideGoogleTranslateUI, 1000);
+            }
+
+            function setTranslateCookie(lang) {
+                var domain = window.location.hostname;
+                document.cookie = "googtrans=/en/" + lang + "; domain=" + domain + "; path=/";
+                document.cookie = "googtrans=/en/" + lang + "; domain=." + domain + "; path=/";
+                document.cookie = "googtrans=/en/" + lang + "; path=/";
+            }
+
+            function updateToggleUI(langCode, flagUrl) {
+                if (flagUrl) {
+                    $('.language-toggle img').attr('src', flagUrl);
+                }
+                $('.active-lang-code').text(langCode.toUpperCase());
+
+                // Update dropdown active state
+                $('.language-dropdown .dropdown-item').removeClass('active');
+                var $activeBtn = $('.language-dropdown .auto-translate-btn[data-lang="' + langCode + '"]');
+                if ($activeBtn.length) {
+                    $activeBtn.addClass('active');
+                    $('.active-lang-name').text($activeBtn.find('span').text());
+                }
+            }
+
+            $('.auto-translate-btn').on('click', function() {
+                var lang = $(this).data('lang');
+                var flag = $(this).find('img').attr('src');
+                var currentLocale = "{{ app()->getLocale() }}";
+
+                setTranslateCookie(lang);
+                localStorage.setItem('smart_lang_code', lang);
+                localStorage.setItem('smart_lang_flag', flag);
+
+                // Force switch to English if not already in English
+                if (currentLocale !== 'en') {
+                    window.location.href = "{{ route('lang', 'en') }}";
+                    return;
+                }
+
+                updateToggleUI(lang, flag);
+
+                var $select = $('.goog-te-combo');
+                if ($select.length) {
+                    $select.val(lang);
+                    $select[0].dispatchEvent(new Event('change'));
+                    setTimeout(hideGoogleTranslateUI, 500);
+                } else {
+                    location.reload();
+                }
+            });
+
+            // Initial Load for Smart Translate
+            $(window).on('load', function() {
+                var savedLang = localStorage.getItem('smart_lang_code');
+                var savedFlag = localStorage.getItem('smart_lang_flag');
+                if (savedLang && savedLang != 'en' && savedLang != 'vi') {
+                    updateToggleUI(savedLang, savedFlag);
+
+                    // Ensure the combo reflects it for Google's internal logic
+                    setTimeout(function() {
+                        var $select = $('.goog-te-combo');
+                        if ($select.length) {
+                            $select.val(savedLang);
+                            $select[0].dispatchEvent(new Event('change'));
+                        }
+                    }, 1000);
+
+                    setTimeout(hideGoogleTranslateUI, 1200);
+                }
+            });
+
+            // Reset Smart Translate if manual lang is selected
+            $('.language-group a:not(.auto-translate-btn)').on('click', function() {
+                localStorage.removeItem('smart_lang_code');
+                localStorage.removeItem('smart_lang_flag');
+
+                var parts = window.location.hostname.split('.');
+                var domains = ["", window.location.hostname, "." + window.location.hostname];
+                var currentDomain = "";
+                for (var i = parts.length - 1; i >= 0; i--) {
+                    currentDomain = parts[i] + (currentDomain ? "." + currentDomain : "");
+                    domains.push(currentDomain);
+                    domains.push("." + currentDomain);
+                }
+
+                domains.forEach(function(domain) {
+                    var domainStr = domain ? "; domain=" + domain : "";
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC" + domainStr +
+                        "; path=/;";
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC" + domainStr +
+                        "; path=;";
+                });
+            });
+
+            // Lightweight Branding Hider
+            function hideGoogleTranslateUI() {
+                $('.goog-te-banner-frame').remove();
+                $('.goog-te-gadget').hide();
+                $('body, html').css({
+                    'top': '0',
+                    'position': 'static',
+                    'margin-top': '0',
+                    'padding-top': '0'
+                });
+            }
+
+            // Target root observer (very low CPU usage compared to body subtree)
+            var langObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === "attributes" && (mutation.attributeName === "style" ||
+                            mutation.attributeName === "class")) {
+                        if (document.documentElement.style.top !== "" && document.documentElement.style
+                            .top !== "0px") {
+                            document.documentElement.style.top = "0px";
+                        }
+                        if (document.body.style.top !== "" && document.body.style.top !== "0px") {
+                            document.body.style.top = "0px";
+                        }
+                    }
+                });
+            });
+
+            langObserver.observe(document.documentElement, {
+                attributes: true
+            });
+
+            // Footer Toggle for Mobile (Under 600px)
+            $('.footer-widget-title').on('click', function() {
+                if ($(window).width() <= 600) {
+                    const $widget = $(this).closest('.footer-widget');
+                    const $list = $widget.find('.footer-menu-list');
+
+                    // Accordion mode: Close others if we're opening a new one
+                    if (!$widget.hasClass('active')) {
+                        $('.footer-widget.active').removeClass('active').find('.footer-menu-list').slideUp();
+                    }
+
+                    $widget.toggleClass('active');
+                    $list.stop().slideToggle();
+                }
+            });
         })(jQuery);
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
     </script>
 </body>
 

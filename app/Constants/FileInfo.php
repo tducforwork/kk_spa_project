@@ -130,6 +130,9 @@ class FileInfo
             'path' => 'assets/images/restaurant/menu',
             'size' => '400x400',
         ];
+        $data['restaurant_menu_pdf'] = [
+            'path' => 'assets/files/restaurant/menu',
+        ];
         $data['special_offer'] = [
             'path' => 'assets/images/special_offer',
             'size' => '',
@@ -144,6 +147,10 @@ class FileInfo
         ];
         $data['hero_slider'] = [
             'path' => 'assets/images/frontend/hero_slider',
+            'size' => '',
+        ];
+        $data['booking_features'] = [
+            'path' => 'assets/images/frontend/booking_features',
             'size' => '',
         ];
 

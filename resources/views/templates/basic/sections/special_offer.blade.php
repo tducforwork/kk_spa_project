@@ -54,11 +54,11 @@
                             </p>
 
                             <div class="offer-actions mt-auto">
-                                <a href="{{ route('contact') }}?subject={{ urlencode('Inquiry for: ' . $offer->t->name) }}"
-                                    class="btn-inquiry">
+                                <a href="#" class="btn-inquiry inquiry-open-form" data-origin="{{ __($offer->t->name) }}">
                                     {{ __('Send an inquiry') }}
                                 </a>
-                                <a href="#" class="btn-card-more text-dark">{{ __('More info') }}</a>
+                                <a href="{{ $offer->t->slug }}"
+                                    class="btn-card-more text-dark">{{ __('More info') }}</a>
                             </div>
                         </div>
                     </div>

@@ -25,8 +25,22 @@ class Captcha
      */
     public static function reCaptcha()
     {
-        $reCaptcha = Extension::where('act', 'google-recaptcha2')->where('status', Status::ENABLE)->first();
-        return $reCaptcha ? $reCaptcha->generateScript() : null;
+        $siteKey = config('captcha.google.site_key');
+        $status  = config('captcha.google.status');
+
+        if (!$siteKey) {
+            $reCaptcha = Extension::where('act', 'google-recaptcha2')->where('status', Status::ENABLE)->first();
+            if (!$reCaptcha) {
+                return null;
+            }
+            return $reCaptcha->generateScript();
+        }
+
+        if (!$status) {
+            return null;
+        }
+
+        return '<script src="https://www.google.com/recaptcha/api.js?render=' . $siteKey . '"></script>';
     }
 
     /**
@@ -36,11 +50,20 @@ class Captcha
      */
     public static function customCaptcha($width = '100%', $height = 46, $bgColor = '#003')
     {
-        $textColor = '#' . gs('base_color');
-        $captcha = Extension::where('act', 'custom-captcha')->where('status', Status::ENABLE)->first();
-        if (!$captcha) {
+        $status    = config('captcha.custom.status');
+        $randomKey = config('captcha.custom.random_key');
+
+        if ($status === null) {
+            $captcha = Extension::where('act', 'custom-captcha')->where('status', Status::ENABLE)->first();
+            if (!$captcha) {
+                return 0;
+            }
+            $randomKey = $captcha->shortcode->random_key->value;
+        } elseif (!$status) {
             return 0;
         }
+
+        $textColor = '#' . gs('base_color');
         $code = rand(100000, 999999);
         $char = str_split($code);
         $ret = '<link href="https://fonts.googleapis.com/css?family=Henny+Penny&display=swap" rel="stylesheet">';
@@ -49,7 +72,7 @@ class Captcha
             $ret .= '<span style="    float:left;     -webkit-transform: rotate(' . rand(-60, 60) . 'deg);">' . $value . '</span>';
         }
         $ret .= '</div>';
-        $captchaSecret = hash_hmac('sha256', $code, $captcha->shortcode->random_key->value);
+        $captchaSecret = hash_hmac('sha256', $code, $randomKey);
         $ret .= '<input type="hidden" name="captcha_secret" value="' . $captchaSecret . '">';
         return $ret;
     }
@@ -76,10 +99,19 @@ class Captcha
      */
     public static function verifyGoogleCaptcha()
     {
-        $pass = true;
-        $googleCaptcha = Extension::where('act', 'google-recaptcha2')->where('status', Status::ENABLE)->first();
-        if ($googleCaptcha) {
-            $resp = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $googleCaptcha->shortcode->secret_key->value . "&response=" . request()['g-recaptcha-response'] . "&remoteip=" . getRealIP()), true);
+        $pass      = true;
+        $secretKey = config('captcha.google.secret_key');
+        $status    = config('captcha.google.status');
+
+        if (!$secretKey) {
+            $googleCaptcha = Extension::where('act', 'google-recaptcha2')->where('status', Status::ENABLE)->first();
+            if ($googleCaptcha) {
+                $secretKey = $googleCaptcha->shortcode->secret_key->value;
+            }
+        }
+
+        if ($secretKey && ($status || $status === null)) {
+            $resp = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $secretKey . "&response=" . request()['g-recaptcha-response'] . "&remoteip=" . getRealIP()), true);
             if (!$resp['success']) {
                 $pass = false;
             }
@@ -94,10 +126,21 @@ class Captcha
      */
     public static function verifyCustomCaptcha()
     {
-        $pass = true;
-        $customCaptcha = Extension::where('act', 'custom-captcha')->where('status', Status::ENABLE)->first();
-        if ($customCaptcha) {
-            $captchaSecret = hash_hmac('sha256', request()->captcha, $customCaptcha->shortcode->random_key->value);
+        $pass      = true;
+        $status    = config('captcha.custom.status');
+        $randomKey = config('captcha.custom.random_key');
+
+        if ($status === null) {
+            $customCaptcha = Extension::where('act', 'custom-captcha')->where('status', Status::ENABLE)->first();
+            if ($customCaptcha) {
+                $randomKey = $customCaptcha->shortcode->random_key->value;
+            } else {
+                $status = 0;
+            }
+        }
+
+        if ($randomKey && ($status || $status === null)) {
+            $captchaSecret = hash_hmac('sha256', request()->captcha, $randomKey);
             if ($captchaSecret != request()->captcha_secret) {
                 $pass = false;
             }

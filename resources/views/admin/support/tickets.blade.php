@@ -10,6 +10,14 @@
                                 <tr>
                                     <th>@lang('Subject')</th>
                                     <th>@lang('Submitted By')</th>
+                                    <th>@lang('Origin')</th>
+                                    @if(request()->routeIs('admin.ticket.booking'))
+                                        <th>@lang('Booking Date')</th>
+                                        <th>@lang('Time')</th>
+                                        <th>@lang('Guests')</th>
+                                    @elseif(request()->routeIs('admin.ticket.inquiry'))
+                                        <th>@lang('Inquiry Date')</th>
+                                    @endif
                                     <th>@lang('Status')</th>
                                     <th>@lang('Priority')</th>
                                     <th>@lang('Last Reply')</th>
@@ -42,6 +50,14 @@
                                                 @lang('Guest')
                                             @endif
                                         </td>
+                                        <td>{{ $item->origin }}</td>
+                                        @if(request()->routeIs('admin.ticket.booking'))
+                                            <td>{{ $item->booking_date }}</td>
+                                            <td>{{ $item->booking_time }}</td>
+                                            <td>{{ $item->guests }}</td>
+                                        @elseif(request()->routeIs('admin.ticket.inquiry'))
+                                            <td>{{ $item->booking_date }}</td>
+                                        @endif
                                         <td>@php echo $item->statusBadge; @endphp</td>
                                         <td>@php echo $item->priorityBadge;@endphp</td>
                                         <td>{{ diffForHumans($item->last_reply) }}</td>

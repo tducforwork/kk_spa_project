@@ -68,6 +68,8 @@ class RestaurantController extends Controller
             'hotline' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'sort_order' => 'nullable|integer|min:0',
+            'menu_pdf' => ['nullable', 'file', new FileTypeValidate(['pdf'])],
+            'promotion_link' => 'nullable|url|max:255',
        ]);
 
         DB::beginTransaction();
@@ -80,6 +82,7 @@ class RestaurantController extends Controller
             $restaurant->email = $request->email;
             $restaurant->is_large_frame = $request->is_large_frame ? 1 : 0;
             $restaurant->sort_order = $request->sort_order ?? 0;
+            $restaurant->promotion_link = $request->promotion_link;
             $restaurant->admin_id = auth()->guard('admin')->id();
 
             if ($request->hasFile('image_input')) {
@@ -87,6 +90,14 @@ class RestaurantController extends Controller
                     $restaurant->image = fileUploader($request->image_input, getFilePath('restaurant'), getFileSize('restaurant'), $restaurant->image);
                 } catch (\Exception $exp) {
                     throw new \Exception('Couldn\'t upload restaurant image');
+                }
+            }
+
+            if ($request->hasFile('menu_pdf')) {
+                try {
+                    $restaurant->menu_pdf = fileUploader($request->menu_pdf, getFilePath('restaurant_menu_pdf'), null, $restaurant->menu_pdf);
+                } catch (\Exception $exp) {
+                    throw new \Exception('Couldn\'t upload menu PDF');
                 }
             }
 
@@ -185,6 +196,11 @@ class RestaurantController extends Controller
 
         // Remove main image
         fileManager()->removeFile(getFilePath('restaurant') . '/' . $restaurant->image);
+
+        // Remove menu PDF
+        if ($restaurant->menu_pdf) {
+            fileManager()->removeFile(getFilePath('restaurant_menu_pdf') . '/' . $restaurant->menu_pdf);
+        }
 
         // Remove gallery images (both types)
         foreach ($restaurant->images as $img) {

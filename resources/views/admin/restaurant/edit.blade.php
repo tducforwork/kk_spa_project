@@ -30,9 +30,24 @@
                             <input type="email" class="form-control" name="email" value="{{ @$restaurant->email }}">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group text-end">
                             <label>@lang('Sort Order')</label>
                             <input type="number" class="form-control" name="sort_order" value="{{ @$restaurant->sort_order }}" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>@lang('Menu PDF')</label>
+                            <input type="file" class="form-control" name="menu_pdf" accept=".pdf">
+                            @if (@$restaurant->menu_pdf)
+                                <div class="mt-2 text-end">
+                                    <a href="{{ getImage(getFilePath('restaurant_menu_pdf') . '/' . $restaurant->menu_pdf) }}" target="_blank" class="text--primary"><i class="las la-file-pdf"></i> @lang('View Current Menu')</a>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="form-group">
+                            <label>@lang('Promotion Link')</label>
+                            <input type="url" class="form-control" name="promotion_link" value="{{ @$restaurant->promotion_link }}" placeholder="https://example.com/promo">
                         </div>
 
                         <div class="form-group">

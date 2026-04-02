@@ -10,11 +10,13 @@
                 @include('Template::sections.feature_icons')
             </div>
             <div class="single-post-main ">
-                <div class="d-flex align-items-center justify-content-center position-relative mb-4 mb-lg-5">
+                <div
+                    class="d-flex align-items-center justify-content-lg-center justify-content-start position-relative mb-4 mb-lg-5">
                     <h2 class="single-post-section-title mb-0">
                         {{ __($room->t->name) }}
                     </h2>
-                    <a href="#" class="btn-card-book position-absolute end-0">{{ __('Book a room') }} <i
+                    <a href="https://book.securebookings.net/roomrate?id=ecec4926-aab8-1659321528-4540-b400-0e44b8bca614&lang={{ app()->getLocale() == 'vi' ? 'vi' : 'en' }}"
+                        class="btn-card-book position-absolute end-0" target="_blank">{{ __('Book a room') }} <i
                             class="las la-arrow-right"></i></a>
                 </div>
                 @php
@@ -111,16 +113,30 @@
                     </h3>
 
                     @php
-                        $relatedRooms = App\Models\Room::with([
-                            'translations',
-                            'images' => function ($q) {
-                                $q->where('type', 2);
-                            },
-                        ])
-                            ->where('id', '!=', $room->id)
-                            ->inRandomOrder()
-                            ->take(2)
+                        $relatedRooms = $room
+                            ->relatedRooms()
+                            ->with([
+                                'translations',
+                                'images' => function ($q) {
+                                    $q->where('type', 2);
+                                },
+                            ])
                             ->get();
+
+                        if ($relatedRooms->isEmpty()) {
+                            $relatedRooms = App\Models\Room::with([
+                                'translations',
+                                'images' => function ($q) {
+                                    $q->where('type', 2);
+                                },
+                            ])
+                                ->where('id', '!=', $room->id)
+                                ->inRandomOrder()
+                                ->take(2)
+                                ->get();
+                        } else {
+                            $relatedRooms = $relatedRooms->take(2);
+                        }
                     @endphp
 
                     <div class="row gy-4">
@@ -180,7 +196,8 @@
                                         </div>
 
                                         <div class="room-card-actions mt-4 d-flex justify-content-center gap-3">
-                                            <a href="#" class="btn-card-book">{{ __('Book a room') }}</a>
+                                            <a href="https://book.securebookings.net/roomrate?id=ecec4926-aab8-1659321528-4540-b400-0e44b8bca614&lang={{ app()->getLocale() == 'vi' ? 'vi' : 'en' }}"
+                                                class="btn-card-book" target="_blank">{{ __('Book a room') }}</a>
                                             <a href="{{ url($related->t->slug) }}"
                                                 class="btn-card-more text-dark">{{ __('More info') }}</a>
                                         </div>

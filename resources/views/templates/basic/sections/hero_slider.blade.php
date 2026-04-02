@@ -98,7 +98,9 @@
 <section class="booking-section">
     <div class="container pb-0">
         <div class="booking-wrapper">
-            <form action="" method="GET" class="booking-form">
+            <form action="https://book.securebookings.net/roomrate" method="GET" class="booking-form" target="_blank">
+                <input type="hidden" name="id" id="hotel_id_fixed" value="ecec4926-aab8-1659321528-4540-b400-0e44b8bca614">
+                <input type="hidden" name="lang" id="hotel_lang_fixed" value="{{ app()->getLocale() == 'vi' ? 'vi' : 'en' }}">
                 <div class="booking-item date-picker-trigger" id="check-in-trigger">
                     <span class="booking-label">@lang('CHECK IN')</span>
                     <div class="booking-value-wrap">
@@ -177,11 +179,11 @@
             function updateUI(startDate, endDate) {
                 $('#check-in-day').text(startDate.format('DD'));
                 $('#check-in-month').text(startDate.format('MMM').toUpperCase());
-                $('#check-in-input').val(startDate.format('YYYY-MM-DD'));
+                $('#check-in-input').val(startDate.format('DD MMM YYYY'));
 
                 $('#check-out-day').text(endDate.format('DD'));
                 $('#check-out-month').text(endDate.format('MMM').toUpperCase());
-                $('#check-out-input').val(endDate.format('YYYY-MM-DD'));
+                $('#check-out-input').val(endDate.format('DD MMM YYYY'));
             }
 
             updateUI(start, end);

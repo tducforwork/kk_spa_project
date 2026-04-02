@@ -10,7 +10,7 @@
             </div>
             <div class="single-page-main ">
                 <h2 class="single-page-section-title">
-                    Special Offers
+                    {{ __('Special Offer') }}
                 </h2>
                 <div class=" single_page-grid special_offers-grid row ">
                     @foreach ($specialOffers as $specialOffer)
@@ -49,7 +49,8 @@
                                         {{ __($specialOffer->t->short_description) }}
                                     </p>
                                     <div class="room-card-actions mt-4 d-flex justify-content-center gap-3">
-                                        <a href="#" class="btn-card-book inquiry-open-form">{{ __('Send an inquiry') }}</a>
+                                        <a href="#" class="btn-card-book inquiry-open-form"
+                                            data-origin="{{ __($specialOffer->t->name) }}">{{ __('Send an inquiry') }}</a>
                                         <a href="{{ url($specialOffer->t->slug) }}"
                                             class="btn-card-more text-dark">{{ __('More info') }}</a>
 
@@ -59,6 +60,7 @@
                         </div>
                     @endforeach
                 </div>
+                {{ $specialOffers->links('Template::partials.pagination') }}
             </div>
 
         </div>

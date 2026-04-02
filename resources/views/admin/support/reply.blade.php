@@ -9,6 +9,9 @@
                             <div class="col-sm-8 col-md-6">
                                 @php echo $ticket->statusBadge; @endphp
                                 [@lang('Ticket#'){{ $ticket->ticket }}] {{ $ticket->subject }}
+                                @if ($ticket->origin)
+                                    <span class="badge badge--info ms-2">{{ $ticket->origin }}</span>
+                                @endif
                             </div>
                             <div class="col-sm-4  col-md-6 text-sm-end mt-sm-0 mt-3">
                                 @if ($ticket->status != Status::TICKET_CLOSE)

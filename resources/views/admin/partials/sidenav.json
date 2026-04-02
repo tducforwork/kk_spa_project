@@ -208,6 +208,18 @@
             }
         ]
     },
+    "manage_inquiries": {
+        "title": "Consulting Inquiries",
+        "icon": "las la-comment-medical",
+        "route_name": "admin.ticket.inquiry",
+        "menu_active": "admin.ticket.inquiry"
+    },
+    "manage_bookings": {
+        "title": "Table Bookings",
+        "icon": "las la-calendar-check",
+        "route_name": "admin.ticket.booking",
+        "menu_active": "admin.ticket.booking"
+    },
     "reports": {
         "title": "Report",
         "icon": "la la-list",

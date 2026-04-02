@@ -543,15 +543,15 @@
     });
     // ========================= Preloader Js End=====================
 
-    // // ========================= Header Sticky Js Start ==============
-    // $(window).on("scroll", function () {
-    //   if ($(window).scrollTop() >= 300) {
-    //     $(".header").addClass("fixed-header");
-    //   } else {
-    //     $(".header").removeClass("fixed-header");
-    //   }
-    // });
-    // // ========================= Header Sticky Js End===================
+    // ========================= Header Sticky Js Start ==============
+    $(window).on("scroll", function () {
+        if ($(window).scrollTop() >= 300) {
+            $(".header").addClass("fixed-header");
+        } else {
+            $(".header").removeClass("fixed-header");
+        }
+    });
+    // ========================= Header Sticky Js End===================
 
     // //============================ Scroll To Top Icon Js Start =========
     var btn = $(".scroll-top");
@@ -567,5 +567,10 @@
     // Best Price Guarantee Close
     $(".best-price-close").on("click", function () {
         $("#best_price_float").fadeOut();
+    });
+
+    // TripAdvisor Float Close
+    $(".tripadvisor-close").on("click", function () {
+        $("#tripadvisor_float").fadeOut();
     });
 })(jQuery);

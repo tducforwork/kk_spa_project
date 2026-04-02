@@ -145,6 +145,7 @@ class NotificationController extends Controller {
             'appkey'       => 'required_if:email_method,sendgrid',
             'public_key'   => 'required_if:email_method,mailjet',
             'secret_key'   => 'required_if:email_method,mailjet',
+            'admin_email'  => 'nullable|email',
         ], [
             'host.required_if'       => 'The :attribute is required for SMTP configuration',
             'port.required_if'       => 'The :attribute is required for SMTP configuration',
@@ -169,6 +170,7 @@ class NotificationController extends Controller {
         }
         $general              = gs();
         $general->mail_config = $data;
+        $general->admin_email = $request->admin_email;
         $general->save();
         $notify[] = ['success', 'Email settings updated successfully'];
         return back()->withNotify($notify);

@@ -10,7 +10,7 @@
             </div>
             <div class="single-page-main ">
                 <h2 class="single-page-section-title">
-                    Travel Guide
+                    {{ __('Travel Guide') }}
                 </h2>
                 <div class=" single_page-grid travel_guide-grid row ">
                     @foreach ($posts as $post)

@@ -11,7 +11,7 @@
 <section class="travel-guides-section ">
     <div class="container">
         <div class="section-header text-center ">
-            <h2 class="home-section-title mb-4">
+            <h2 class="home-section-title mb-lg-4 mb-3">
                 {{ __(@$travelGuidesContent->data_values->{'heading_' . app()->getLocale()}) }}</h2>
         </div>
 
@@ -31,7 +31,7 @@
                                 {{ strLimit(strip_tags($post->t->description), 120) }}
                             </p>
                             <div class="travel-guide-footer">
-                                <a href="#" class="read-more-btn">
+                                <a href="{{ $post->t->slug }}" class="read-more-btn">
                                     {{ __('Read more') }}
                                 </a>
                             </div>

@@ -31,6 +31,30 @@ class SupportTicketController extends Controller
         return view('admin.support.tickets', compact('items', 'pageTitle'));
     }
 
+    public function inquiryTickets()
+    {
+        $pageTitle = 'Consulting Inquiries';
+        $items = SupportTicket::where('ticket_type', 2)
+            ->searchable(['name', 'subject', 'ticket'])
+            ->with('user')
+            ->orderByDesc('id')
+            ->paginate(getPaginate());
+
+        return view('admin.support.tickets', compact('items', 'pageTitle'));
+    }
+
+    public function bookingTickets()
+    {
+        $pageTitle = 'Table Bookings';
+        $items = SupportTicket::where('ticket_type', 3)
+            ->searchable(['name', 'subject', 'ticket'])
+            ->with('user')
+            ->orderByDesc('id')
+            ->paginate(getPaginate());
+
+        return view('admin.support.tickets', compact('items', 'pageTitle'));
+    }
+
     public function pendingTicket()
     {
         $pageTitle = 'Pending Tickets';

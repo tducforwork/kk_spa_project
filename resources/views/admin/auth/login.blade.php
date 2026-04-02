@@ -274,7 +274,7 @@
                     <a href="{{ route('admin.password.reset') }}" class="forgot-password">@lang('Lost your password?')</a>
                 </div>
 
-                <x-captcha />
+                <x-captcha path="admin.auth" />
 
                 <button type="submit" class="btn-login">
                     <i class="las la-sign-in-alt"></i>

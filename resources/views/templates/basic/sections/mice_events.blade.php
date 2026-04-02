@@ -16,7 +16,7 @@
         <div class="events-grid">
             @foreach ($events as $event)
                 <!-- Event Card -->
-                <a href="#" class="event-card">
+                <div class="event-card">
                     <div class="event-image-wrapper">
                         <img class="event-image"
                             src="{{ getImage(getFilePath('mice_event') . '/' . $event->avatar, getFileSize('mice_event')) }}"
@@ -28,11 +28,12 @@
                         <div class="event-divider"></div>
                         <p class="event-description line-clamp-3">{{ __($event->t->short_description) }}</p>
                         <div class="event-buttons">
-                            <button class="event-btn event-btn--outline">{{ __('Send Enquiry') }}</button>
-                            <button class="event-btn event-btn--filled">{{ __('Explore') }}</button>
+                            <button class="event-btn event-btn--outline inquiry-open-form"
+                                data-origin="{{ __($event->t->name) }}">{{ __('Send Enquiry') }}</button>
+                            <a href="{{ $event->t->slug }}" class="event-btn event-btn--filled">{{ __('Explore') }}</a>
                         </div>
                     </div>
-                </a>
+                </div>
             @endforeach
         </div>
     </div>

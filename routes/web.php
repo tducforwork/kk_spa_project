@@ -24,6 +24,7 @@ Route::controller('SiteController')->group(function () {
     Route::post('/subscribe', 'addSubscriber')->name('subscribe');
     Route::get('/contact', 'contact')->name('contact');
     Route::post('/contact', 'contactSubmit')->name('contact.submit');
+    Route::post('/inquiry-submit', 'inquirySubmit')->name('inquiry.submit');
     Route::get('blog', 'blog')->name('blog');
     Route::get('blog/{slug}', 'blogDetails')->name('blog.details');
     Route::get('/change/{lang?}', 'changeLanguage')->name('lang');
@@ -37,6 +38,8 @@ Route::controller('SiteController')->group(function () {
     Route::get('/metting-events', 'meetingEvents')->name('meeting_events');
     Route::get('/travel-guide', 'travelGuide')->name('travel_guide');
     Route::get('/about', 'about')->name('about');
+    Route::get('/booking', 'booking')->name('booking');
+    Route::get('/search', 'search')->name('search');
 
     Route::get('/', 'index')->name('home');
     Route::get('/{slug}', 'checkKey')->name('check.key');

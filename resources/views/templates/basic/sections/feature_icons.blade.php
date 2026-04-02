@@ -1,4 +1,5 @@
 @php
+    $featureIconsContent = getContent('feature_icons.content', true);
     $featureIcons = getContent('feature_icons.element')->sortBy('id');
 @endphp
 
@@ -28,8 +29,10 @@
                             <img src="{{ asset('assets/images/kk_sapa/tripadvisor_rating.webp') }}"
                                 alt="TripAdvisor Rating">
                         </div>
-                        <p class="tripadvisor-reviews">{{ __('Based on 1.934 traveler reviews') }}</p>
-                        <a href="#" class="tripadvisor-link">{{ __('Read review') }}</a>
+                        <p class="tripadvisor-reviews">
+                            {{ __(@$featureIconsContent->data_values->{'total_review_' . app()->getLocale()}) }}</p>
+                        <a href="https://www.tripadvisor.com.vn/Hotel_Review-g311304-d19055925-Reviews-KK_Sapa_Hotel-Sapa_Lao_Cai_Province.html"
+                            target="_blank" class="tripadvisor-link">{{ __('Read review') }}</a>
                     </div>
                 </div>
             </div>

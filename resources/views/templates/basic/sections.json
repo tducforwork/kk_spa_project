@@ -43,7 +43,8 @@
             "title": "text",
             "images": {
                 "image": {
-                    "size": ""
+                    "size": "",
+                    "extensions": ["jpg", "jpeg", "png", "svg"]
                 }
             },
             "modal": false
@@ -122,10 +123,14 @@
         "builder": true,
         "no_selection": true,
         "name": "Feature Icons",
+        "content": {
+            "total_review": "text"
+        },
         "element": {
             "images": {
                 "icon": {
-                    "size": "64x64"
+                    "size": "",
+                    "extensions": ["jpg", "jpeg", "png", "svg"]
                 }
             },
             "title": "text",
@@ -259,6 +264,19 @@
                 }
             },
             "modal": false
+        }
+    },
+    "booking_features": {
+        "builder": true,
+        "name": "Booking Features",
+        "element": {
+            "images": {
+                "image": {
+                    "size": ""
+                }
+            },
+            "title": "text",
+            "modal": true
         }
     }
 }

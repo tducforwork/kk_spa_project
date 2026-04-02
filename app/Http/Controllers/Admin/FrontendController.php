@@ -96,8 +96,10 @@ class FrontendController extends Controller
         foreach ($request->except('_token', 'video') as $inputField => $val) {
             if ($inputField == 'has_image' && $imgJson) {
                 foreach ($imgJson as $imgValKey => $imgJsonVal) {
-                    $validationRule['image_input.' . $imgValKey]               = ['nullable', 'image', new FileTypeValidate(['jpg', 'jpeg', 'png'])];
-                    $validationMessage['image_input.' . $imgValKey . '.image'] = keyToTitle($imgValKey) . ' must be an image';
+                    $exts = isset($imgJsonVal->extensions) ? (array) $imgJsonVal->extensions : ['jpg', 'jpeg', 'png'];
+                    $ruleType = in_array('svg', $exts) ? 'file' : 'image';
+                    $validationRule['image_input.' . $imgValKey]               = ['nullable', $ruleType, new FileTypeValidate($exts)];
+                    $validationMessage['image_input.' . $imgValKey . '.' . $ruleType] = keyToTitle($imgValKey) . ' must be a valid ' . $ruleType;
                     $validationMessage['image_input.' . $imgValKey . '.mimes'] = keyToTitle($imgValKey) . ' file type not supported';
                 }
                 continue;

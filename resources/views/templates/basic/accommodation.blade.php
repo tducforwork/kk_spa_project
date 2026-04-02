@@ -7,7 +7,7 @@
         <div class="container">
             <div class="single-page-heading">
                 <h1 class="single-page-section-title">
-                    Book Directly on our Website
+                    {{ __('Book Directly on our Website') }}
                 </h1>
                 @include('Template::sections.feature_icons')
             </div>
@@ -70,7 +70,8 @@
                                     </div>
 
                                     <div class="room-card-actions mt-4 d-flex justify-content-center gap-3">
-                                        <a href="#" class="btn-card-book">{{ __('Book a room') }}</a>
+                                        <a href="https://book.securebookings.net/roomrate?id=ecec4926-aab8-1659321528-4540-b400-0e44b8bca614&lang={{ app()->getLocale() == 'vi' ? 'vi' : 'en' }}"
+                                            class="btn-card-book" target="_blank">{{ __('Book a room') }}</a>
                                         <a href="{{ url($room->t->slug) }}"
                                             class="btn-card-more text-dark">{{ __('More info') }}</a>
 
@@ -80,6 +81,7 @@
                         </div>
                     @endforeach
                 </div>
+                {{ $rooms->links('Template::partials.pagination') }}
             </div>
 
         </div>

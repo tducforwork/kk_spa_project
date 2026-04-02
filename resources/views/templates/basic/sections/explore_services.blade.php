@@ -19,7 +19,7 @@
 @endphp
 
 <section id="services" class="services-section py-lg-5 py-4">
-    <div class="services-container">
+    <div class="services-container container">
         <h2 class="services-title">{{ __(@$exploreServicesContent->data_values->{'heading_' . app()->getLocale()}) }}
         </h2>
 
@@ -30,7 +30,7 @@
                     @for ($i = 0; $i < 2; $i++)
                         @php $item = $smallRestaurants->get($i); @endphp
                         @if ($item)
-                            <a href="#" class="service-card service-card--small">
+                            <a href="{{ $item->t->slug }}" class="service-card service-card--small">
                                 <div class="service-image-wrapper">
                                     <img class="service-image"
                                         src="{{ getImage(getFilePath('restaurant') . '/' . $item->image, getFileSize('restaurant')) }}"
@@ -49,7 +49,7 @@
 
                 <!-- Service Featured -->
                 @if ($featured)
-                    <a href="#" class="service-card service-card--featured">
+                    <a href="{{ $featured->t->slug }}" class="service-card service-card--featured">
                         <img class="service-image service-image--full"
                             src="{{ getImage(getFilePath('restaurant') . '/' . $featured->image, getFileSize('restaurant')) }}"
                             alt="{{ __($featured->t->name) }}" loading="lazy" decoding="async" />
@@ -68,7 +68,7 @@
                 @for ($i = 2; $i < 4; $i++)
                     @php $item = $smallRestaurants->get($i); @endphp
                     @if ($item)
-                        <a href="#" class="service-card service-card--small">
+                        <a href="{{ $item->t->slug }}" class="service-card service-card--small">
                             <div class="service-image-wrapper">
                                 <img class="service-image"
                                     src="{{ getImage(getFilePath('restaurant') . '/' . $item->image, getFileSize('restaurant')) }}"

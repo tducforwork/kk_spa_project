@@ -14,7 +14,7 @@
         </div>
         <div class="intro-slider-wrapper">
             <div class="intro-content-box intro-restaurant">
-                <h4 class="text-center">Contact</h4>
+                <h4 class="text-center">{{ __('Contact') }}</h4>
 
                 <div class="divider-restaurant"></div>
                 <div class="offer-contact">
@@ -26,7 +26,8 @@
 
                         <li class="d-flex align-items-center gap-3 flex-column">
                             <img src="{{ asset('assets/images/kk_sapa/mail.webp') }}" alt="">
-                            <span>{{ __(@$aboutContent->data_values->{'email_' . app()->getLocale()} ?? @$aboutContent->data_values->email) }}</span>
+                            <a
+                                href="mailto:{{ __(@$aboutContent->data_values->{'email_' . app()->getLocale()} ?? @$aboutContent->data_values->email) }}">{{ __(@$aboutContent->data_values->{'email_' . app()->getLocale()} ?? @$aboutContent->data_values->email) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -34,7 +35,8 @@
                 <div class="intro-actions">
                     <ul>
                         <li class="intro-action-item mb-4">
-                            <a href="#" class="intro-action-link ">
+                            <a href="https://book.securebookings.net/roomrate?id=ecec4926-aab8-1659321528-4540-b400-0e44b8bca614&lang={{ app()->getLocale() == 'vi' ? 'vi' : 'en' }}"
+                                class="intro-action-link " target="_blank">
                                 {{ __('Book a room') }}
                                 <i class="las la-arrow-right"></i>
                             </a>

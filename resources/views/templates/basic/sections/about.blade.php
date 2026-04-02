@@ -33,7 +33,7 @@
             </p>
         </div>
 
-        <a href="{{ @$aboutCaption->data_values->button_url }}" class="btn-about">
+        <a href="{{ @$aboutCaption->data_values->{'button_url_' . app()->getLocale()} }}" class="btn-about">
             {{ __(@$aboutCaption->data_values->{'button_text_' . app()->getLocale()} ?? @$aboutCaption->data_values->button_text) }}
         </a>
     </div>

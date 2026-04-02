@@ -28,16 +28,18 @@ class RoomController extends Controller
         $pageTitle = 'Create Room';
         $languages = Language::all();
         $categories = CategoryRoom::withTranslation()->get();
-        return view('admin.room.create', compact('pageTitle', 'languages', 'categories'));
+        $relatedRooms = Room::withTranslation()->orderBy('id', 'desc')->get();
+        return view('admin.room.create', compact('pageTitle', 'languages', 'categories', 'relatedRooms'));
     }
 
     public function edit($id)
     {
-        $room = Room::with(['translations', 'images', 'introImages'])->findOrFail($id);
+        $room = Room::with(['translations', 'images', 'introImages', 'relatedRooms'])->findOrFail($id);
         $pageTitle = 'Edit Room';
         $languages = Language::all();
         $categories = CategoryRoom::withTranslation()->get();
-        return view('admin.room.edit', compact('pageTitle', 'room', 'languages'));
+        $relatedRooms = Room::withTranslation()->where('id', '!=', $id)->orderBy('id', 'desc')->get();
+        return view('admin.room.edit', compact('pageTitle', 'room', 'languages', 'relatedRooms'));
     }
 
     public function store(Request $request, $id = 0)
@@ -66,6 +68,8 @@ class RoomController extends Controller
             'translations.*.additional_info' => 'nullable|array',
             'gallery'               => 'nullable|array',
             'gallery.*'             => ['image', new FileTypeValidate(['jpg', 'jpeg', 'png'])],
+            'related_rooms'         => 'nullable|array',
+            'related_rooms.*'       => 'integer|exists:rooms,id',
         ]);
 
         DB::beginTransaction();
@@ -169,6 +173,8 @@ class RoomController extends Controller
                     }
                 }
             }
+
+            $room->relatedRooms()->sync($request->related_rooms ?? []);
 
             DB::commit();
         } catch (\Exception $e) {

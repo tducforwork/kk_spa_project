@@ -18,6 +18,12 @@
                                 <option value="mailjet" @if (gs('mail_config')->name == 'mailjet') selected @endif>@lang('Mailjet API')</option>
                             </select>
                         </div>
+                        
+                        <div class="form-group mt-4">
+                            <label>@lang('Admin Notification Email') </label>
+                            <input type="text" class="form-control" placeholder="@lang('Email address to receive newsletter notifications')" name="admin_email" value="{{ gs('admin_email') }}">
+                            <small class="text--small text--info"> <i class="las la-info-circle"></i> @lang('Newsletter subscription notifications will be sent to this email address.')</small>
+                        </div>
                         <div class="row mt-4 d-none configForm" id="smtp">
                             <div class="col-md-12">
                                 <h6 class="mb-2">@lang('SMTP Configuration')</h6>

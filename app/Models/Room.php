@@ -43,4 +43,9 @@ class Room extends Model
     {
         return $this->belongsTo(Admin::class, 'admin_id');
     }
+
+    public function relatedRooms()
+    {
+        return $this->belongsToMany(Room::class, 'room_related', 'room_id', 'related_id');
+    }
 }

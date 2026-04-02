@@ -115,6 +115,8 @@ Route::middleware(['admin', 'admin.permission'])->group(function () {
     Route::controller('SupportTicketController')->prefix('ticket')->name('ticket.')->group(function () {
         Route::get('/', 'tickets')->name('index');
         Route::get('pending', 'pendingTicket')->name('pending');
+        Route::get('inquiry', 'inquiryTickets')->name('inquiry');
+        Route::get('booking', 'bookingTickets')->name('booking');
         Route::get('closed', 'closedTicket')->name('closed');
         Route::get('answered', 'answeredTicket')->name('answered');
         Route::get('view/{id}', 'ticketReply')->name('view');

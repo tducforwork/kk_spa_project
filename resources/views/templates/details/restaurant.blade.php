@@ -33,7 +33,7 @@
 
                                 <li class="d-flex align-items-center gap-3 flex-column">
                                     <img src="{{ asset('assets/images/kk_sapa/mail.webp') }}" alt="">
-                                    <span>{{ $restaurant->email }}</span>
+                                    <a href="mailto:{{ $restaurant->email }}">{{ $restaurant->email }}</a>
                                 </li>
                             </ul>
                         </div>
@@ -41,20 +41,26 @@
                         <div class="intro-actions">
                             <ul>
                                 <li class="intro-action-item mb-4">
-                                    <a href="#" class="intro-action-link book-table-btn">
+                                    <a href="#" class="intro-action-link book-table-btn"
+                                        data-origin="{{ __($restaurant->t->name) }}">
                                         {{ __('Book a table') }}
                                         <i class="las la-arrow-right"></i>
                                     </a>
                                 </li>
-                                <li class="intro-action-item mb-4">
-                                    <a href="#" class="intro-action-link show-menu-btn">
-                                        {{ __('Menu') }}
-                                        <i class="las la-arrow-right"></i>
-                                    </a>
-                                </li>
-                                @if ($restaurant->is_large_frame !== 1)
+
+                                @if ($restaurant->menu_pdf)
+                                    <li class="intro-action-item mb-4">
+                                        <a href="{{ getImage(getFilePath('restaurant_menu_pdf') . '/' . $restaurant->menu_pdf) }}"
+                                            target="_blank" class="intro-action-link show-menu-btn">
+                                            {{ __('Menu') }}
+                                            <i class="las la-arrow-right"></i>
+                                        </a>
+                                    </li>
+                                @endif
+                                @if ($restaurant->promotion_link)
                                     <li class="intro-action-item ">
-                                        <a href="#" class="intro-action-link show-promotion-btn">
+                                        <a href="{{ $restaurant->promotion_link }}" target="_blank"
+                                            class="intro-action-link show-promotion-btn">
                                             {{ __('Promotion') }}
                                             <i class="las la-arrow-right"></i>
                                         </a>

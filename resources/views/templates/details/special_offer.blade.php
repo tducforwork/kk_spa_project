@@ -31,7 +31,7 @@
                                 </li>
                                 <li class="d-flex align-items-center gap-3 flex-column">
                                     <img src="{{ asset('assets/images/kk_sapa/mail.webp') }}" alt="">
-                                    <span>{{ $offer->email }}</span>
+                                    <a href="mailto:{{ $offer->email }}">{{ $offer->email }}</a>
                                 </li>
                             </ul>
                         </div>
@@ -39,8 +39,9 @@
                         <div class="intro-actions">
                             <ul>
                                 <li class="intro-action-item ">
-                                    <a href="#" class="intro-action-link book-room-btn">
-                                        {{ __('Book a room') }}
+                                    <a href="#" class="intro-action-link inquiry-open-form"
+                                        data-origin="{{ __($offer->t->name) }}">
+                                        {{ __('Send an inquiry') }}
                                         <i class="las la-arrow-right"></i>
                                     </a>
                                 </li>
@@ -145,7 +146,8 @@
                                             {{ __($related->t->short_description) }}
                                         </p>
                                         <div class="room-card-actions mt-4 d-flex justify-content-center gap-3">
-                                            <a href="#" class="btn-card-book">{{ __('Send an inquiry') }}</a>
+                                            <a href="#" class="btn-card-book inquiry-open-form"
+                                                data-origin="{{ __($related->t->name) }}">{{ __('Send an inquiry') }}</a>
                                             <a href="{{ url($related->t->slug) }}"
                                                 class="btn-card-more text-dark">{{ __('More info') }}</a>
 

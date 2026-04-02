@@ -28,7 +28,7 @@
 
                                 <div class="facility-overlay">
                                     <h3 class="facility-name">{{ __($facility->t->name) }}</h3>
-                                    <a href="#" class="btn-more-info">{{ __('More info') }}</a>
+                                    <a href="{{ $facility->t->slug }}" class="btn-more-info">{{ __('More info') }}</a>
                                 </div>
                             </div>
                         </div>
@@ -38,12 +38,12 @@
             </div>
         </div>
 
-        <div class="facilities-explore-btn-wrap">
+        {{-- <div class="facilities-explore-btn-wrap">
             <a href="#" class="btn-explore-main">
                 <span class="main-text">{{ __('EXPLORE') }}</span>
 
             </a>
-        </div>
+        </div> --}}
     </div>
 </section>
 

@@ -51,6 +51,15 @@
                             <input type="number" class="form-control" name="sort_order"
                                 value="{{ old('sort_order', @$room->sort_order ?? 0) }}" min="0">
                         </div>
+                        <div class="form-group border--primary p-2 border-1" style="border: 1px solid !important; border-radius: 5px;">
+                            <label>@lang('Related Rooms')</label>
+                            <select name="related_rooms[]" class="form-control select2" multiple="multiple">
+                                @foreach ($relatedRooms as $relRoom)
+                                    <option value="{{ $relRoom->id }}">
+                                        {{ __($relRoom->t->name) }} ({{ $relRoom->id }})</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
 

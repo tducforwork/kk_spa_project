@@ -26,6 +26,7 @@ use App\Models\Facility;
 use App\Models\SpecialOffer;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class SiteController extends Controller
 {
@@ -83,7 +84,7 @@ class SiteController extends Controller
         }])
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(4);
 
         $breadcrumb_mapping = [
             'Accommodation' => __('Accommodation'),
@@ -113,7 +114,7 @@ class SiteController extends Controller
         }])
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(3);
 
         $breadcrumb_mapping = [
             'Special Offers' => __('Special Offers'),
@@ -143,7 +144,7 @@ class SiteController extends Controller
             ->with(['translations'])
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(3);
 
         $breadcrumb_mapping = [
             'Meeting & Events' => __('Meeting & Events'),
@@ -173,6 +174,32 @@ class SiteController extends Controller
 
         return view('Template::travel_guide', compact('pageTitle', 'sections', 'seoContents', 'seoImage', 'breadcrumb_mapping', 'posts'));
     }
+    public function booking()
+    {
+        $pageTitle   = "Booking";
+        $sections    = Page::where('tempname', activeTemplate())->where('slug', 'booking')->first();
+        $seoContents = $sections->seo_content;
+        $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
+        return view('Template::booking', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
+    }
+    public function search(Request $request)
+    {
+        $search = $request->search;
+        $pageTitle   = "Search Results: " . $search;
+        $posts = Post::where('status', 1)
+            ->whereHas('translations', function ($query) use ($search) {
+                $query->where('lang_code', app()->getLocale())
+                    ->where('name', 'like', "%$search%");
+            })
+            ->withTranslation()
+            ->orderBy('id', 'desc')
+            ->paginate(6);
+
+        $sections    = Page::where('tempname', activeTemplate())->where('slug', 'search')->first();
+        $seoContents = @$sections->seo_content;
+        $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
+        return view('Template::search', compact('pageTitle', 'sections', 'seoContents', 'seoImage', 'posts', 'search'));
+    }
     public function contact()
     {
         $pageTitle   = "Contact";
@@ -188,44 +215,198 @@ class SiteController extends Controller
     {
         $request->validate([
             'name'    => 'required',
-            'email'   => 'required',
-            'subject' => 'required|string|max:255',
+            'phone'   => 'nullable|string|max:100',
+            'email'   => 'required|email|max:255',
+            'subject' => 'nullable|string|max:255',
             'message' => 'required',
         ]);
 
         $request->session()->regenerateToken();
 
         if (!verifyCaptcha()) {
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Invalid captcha provided']);
+            }
             $notify[] = ['error', 'Invalid captcha provided'];
             return back()->withNotify($notify);
         }
 
-        $random = getNumber();
+        DB::beginTransaction();
 
-        $ticket             = new SupportTicket();
-        $ticket->user_id    = auth()->id() ?? 0;
-        $ticket->name       = $request->name;
-        $ticket->email      = $request->email;
-        $ticket->priority   = Status::PRIORITY_MEDIUM;
-        $ticket->ticket     = $random;
-        $ticket->subject    = $request->subject;
-        $ticket->last_reply = Carbon::now();
-        $ticket->status     = Status::TICKET_OPEN;
-        $ticket->save();
+        try {
+            $random = getNumber();
 
-        $adminNotification            = new AdminNotification();
-        $adminNotification->user_id   = authUser() ? authUser()->id : 0;
-        $adminNotification->title     = 'A new contact message has been submitted';
-        $adminNotification->click_url = urlPath('admin.ticket.view', $ticket->id);
-        $adminNotification->save();
+            $ticket             = new SupportTicket();
+            $ticket->user_id    = auth()->id() ?? 0;
+            $ticket->name       = $request->name;
+            $ticket->email      = $request->email;
+            $ticket->priority   = Status::PRIORITY_MEDIUM;
+            $ticket->ticket     = $random;
+            $ticket->subject    = $request->subject ?? 'Contact Message from Website';
+            $ticket->last_reply = Carbon::now();
+            $ticket->status     = Status::TICKET_OPEN;
+            $ticket->ticket_type = 1; // Contact Form
+            $ticket->save();
 
-        $message                    = new SupportMessage();
-        $message->support_ticket_id = $ticket->id;
-        $message->message           = $request->message;
-        $message->save();
+            $adminNotification            = new AdminNotification();
+            $adminNotification->user_id   = authUser() ? authUser()->id : 0;
+            $adminNotification->title     = 'A new contact message has been submitted';
+            $adminNotification->click_url = urlPath('admin.ticket.view', $ticket->id);
+            $adminNotification->save();
 
-        $notify[] = ['success', 'Ticket created successfully!'];
-        return to_route('ticket.view', [$ticket->ticket])->withNotify($notify);
+            $contactMessage = $request->message;
+            if ($request->phone) {
+                $contactMessage .= "\n\nPhone: " . $request->phone;
+            }
+
+            $message                    = new SupportMessage();
+            $message->support_ticket_id = $ticket->id;
+            $message->message           = $contactMessage;
+            $message->save();
+
+            $admin_email = gs('admin_email');
+            if ($admin_email) {
+                notify([
+                    'email'    => $admin_email,
+                    'fullname' => 'Admin',
+                    'username' => 'admin',
+                ], 'CONTACT_FORM_SUBMIT_ADMIN', [
+                    'name'      => $request->name,
+                    'email'     => $request->email,
+                    'phone'     => $request->phone,
+                    'subject'   => $ticket->subject,
+                    'message'   => $request->message,
+                    'ticket'    => $ticket->ticket,
+                    'click_url' => urlPath('admin.ticket.view', $ticket->id),
+                ], ['email']);
+            }
+
+            // Notification for User
+            notify([
+                'email'    => $request->email,
+                'fullname' => $request->name,
+                'username' => $request->email,
+            ], 'CONTACT_FORM_SUBMIT_USER', [
+                'name'    => $request->name,
+                'subject' => $ticket->subject,
+                'message' => $request->message,
+                'ticket'    => $ticket->ticket,
+            ], ['email']);
+
+            DB::commit();
+
+            if ($request->ajax()) {
+                return response()->json(['success' => 'Your inquiry has been submitted successfully']);
+            }
+
+            $notify[] = ['success', 'Ticket created successfully!'];
+            return to_route('contact')->withNotify($notify);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            if ($request->ajax()) {
+                return response()->json(['error' => 'An error occurred while sending your message. Please try again.']);
+            }
+            $notify[] = ['error', 'Something went wrong: ' . $e->getMessage()];
+            return back()->withNotify($notify);
+        }
+    }
+
+    public function inquirySubmit(Request $request)
+    {
+        $request->validate([
+            'name'      => 'required',
+            'phone'     => 'nullable|string|max:100',
+            'email'     => 'required|email|max:255',
+            'message'   => 'required',
+            'form_type' => 'required|in:inquiry,booking',
+            'date'      => 'nullable|string',
+            'time'      => 'nullable|string',
+            'guests'    => 'nullable|integer',
+            'origin'    => 'nullable|string|max:255',
+        ]);
+
+        if (!verifyCaptcha()) {
+            return response()->json(['error' => 'Invalid captcha provided']);
+        }
+
+        DB::beginTransaction();
+        try {
+            $ticket = new SupportTicket();
+            $ticket->user_id = auth()->id() ?? 0;
+            $ticket->name = $request->name;
+            $ticket->email = $request->email;
+            $ticket->priority = Status::PRIORITY_MEDIUM;
+            $ticket->ticket = getNumber();
+            $ticket->status = Status::TICKET_OPEN;
+            $ticket->last_reply = Carbon::now();
+            $ticket->origin = $request->origin;
+
+            if ($request->form_type == 'booking') {
+                $ticket->ticket_type = 3;
+                $ticket->subject = 'New Table Booking Request';
+                $ticket->booking_date = $request->date;
+                $ticket->booking_time = $request->time;
+                $ticket->guests = $request->guests;
+                $adminTemplate = 'BOOKING_REQUEST_ADMIN';
+                $userTemplate = 'BOOKING_REQUEST_USER';
+            } else {
+                $ticket->ticket_type = 2;
+                $ticket->subject = 'New Consulting Inquiry';
+                $ticket->booking_date = $request->date;
+                $adminTemplate = 'INQUIRY_REQUEST_ADMIN';
+                $userTemplate = 'INQUIRY_REQUEST_USER';
+            }
+
+            $ticket->save();
+
+            $adminNotification            = new AdminNotification();
+            $adminNotification->user_id   = authUser() ? authUser()->id : 0;
+            $adminNotification->title     = 'A new ' . $request->form_type . ' request has been submitted';
+            $adminNotification->click_url = urlPath('admin.ticket.view', $ticket->id);
+            $adminNotification->save();
+
+            $contactMessage = $request->message;
+            if ($request->phone) {
+                $contactMessage .= "\n\nPhone: " . $request->phone;
+            }
+
+            $message = new SupportMessage();
+            $message->support_ticket_id = $ticket->id;
+            $message->message = $contactMessage;
+            $message->save();
+
+            DB::commit();
+
+            $notifyData = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'message' => $request->message,
+                'date' => $request->date ?? 'N/A',
+                'time' => $request->time ?? 'N/A',
+                'guests' => $request->guests ?? '0',
+                'origin' => $request->origin ?? 'General',
+                'ticket' => $ticket->ticket,
+                'click_url' => urlPath('admin.ticket.view', $ticket->id),
+            ];
+
+            notify([
+                'email'    => gs('admin_email'),
+                'fullname' => 'Admin',
+                'username' => 'admin',
+            ], $adminTemplate, $notifyData, ['email']);
+
+            notify([
+                'email'    => $request->email,
+                'fullname' => $request->name,
+                'username' => $request->email,
+            ], $userTemplate, $notifyData, ['email']);
+
+            return response()->json(['success' => 'Your request has been submitted successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Something went wrong, please try again.']);
+        }
     }
 
     public function policyPages($slug)
@@ -339,11 +520,41 @@ class SiteController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-        $subscriber        = new Subscriber();
-        $subscriber->email = $request->email;
-        $subscriber->save();
 
-        return response()->json(['success' => true, 'message' => 'Subscribed successfully']);
+        if (!verifyCaptcha()) {
+            return response()->json(['error' => 'Invalid captcha provided']);
+        }
+
+        DB::beginTransaction();
+        try {
+            $subscriber        = new Subscriber();
+            $subscriber->email = $request->email;
+            $subscriber->save();
+
+            // Send confirmation email to User
+            notify([
+                'email'    => $subscriber->email,
+                'username' => $subscriber->email,
+                'fullname' => explode('@', $subscriber->email)[0],
+            ], 'NEWSLETTER_SUBSCRIBE_USER', sendVia: ['email']);
+
+            // Send notification email to Admin
+            if (gs('admin_email')) {
+                notify([
+                    'email'    => gs('admin_email'),
+                    'username' => gs('admin_email'),
+                    'fullname' => 'Admin',
+                ], 'NEWSLETTER_SUBSCRIBE_ADMIN', [
+                    'email' => $subscriber->email,
+                ], sendVia: ['email']);
+            }
+
+            DB::commit();
+            return response()->json(['success' => true, 'message' => 'Subscribed successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 
     public function checkKey($slug)

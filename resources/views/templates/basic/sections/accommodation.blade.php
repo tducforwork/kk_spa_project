@@ -16,7 +16,7 @@
         <div class="swiper slider-accommodation">
             <div class="swiper-wrapper">
                 @foreach ($rooms as $room)
-                    <div class="swiper-slide accommodation-slide accommodation-slide--featured">
+                    <a href="{{ $room->t->slug }}" class="swiper-slide accommodation-slide accommodation-slide--featured">
                         <img class="accommodation-image"
                             src="{{ getImage(getFilePath('room') . '/' . $room->image, getFileSize('room')) }}"
                             alt="{{ __($room->t->name) }}" loading="lazy" decoding="async" />
@@ -28,8 +28,7 @@
                                 </p>
                             </div>
                         </div>
-                        <a href="#" class="stretched-link"></a>
-                    </div>
+                    </a>
                 @endforeach
             </div>
 

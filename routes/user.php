@@ -78,5 +78,4 @@ Route::middleware('user')->group(function () {
             Route::get('download/{ticket}', 'ticketDownload')->name('download');
         });
     });
-
 });

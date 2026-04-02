@@ -169,10 +169,10 @@ $sessionData = session('SEND_NOTIFICATION_TO_SUBSCRIBER') ?? [];
 
             }, 1000);
         });
-        @endif
+        @endempty
     })(jQuery);
 
-    @if(!empty(@$sessionData) && @request() - > email_sent && @request() - > email_sent = 'yes')
+    @if(!empty($sessionData) && request()->email_sent == 'yes')
     window.addEventListener('beforeunload', function(event) {
         if (!formSubmit) {
             event.preventDefault();
